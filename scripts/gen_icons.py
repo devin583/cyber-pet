@@ -78,4 +78,4 @@ def write_png(path, px):
 if __name__ == '__main__':
     os.makedirs(OUT_DIR, exist_ok=True)
     write_png(os.path.join(OUT_DIR, 'tray.png'), render(32))
-    write_png(os.path.join(OUT_DIR, 'icon.png'), render(256))
+    write_png(os.path.join(OUT_DIR, 'icon.png'), render(512))  # mac 图标要求 ≥512
