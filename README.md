@@ -45,13 +45,24 @@ npm install
 npm start
 ```
 
-## 打包(Windows 安装包)
+## 下载安装包
+
+在 [Releases](https://github.com/devin583/cyber-pet/releases) 页面下载:Windows 用 `.exe`(NSIS 安装器),macOS 用 `.dmg`(未签名,首次打开需右键 → 打开)。
+
+## 打包
+
+本地打包:
 
 ```bash
-npm run dist:win     # 在 Windows 上执行,产物在 dist/
+npm run dist:win     # Windows 安装包(在 Windows 上执行)
+npm run dist:mac     # macOS dmg
 ```
 
-> macOS 上开发调试没问题(`npm start`),打 Windows 包建议在 Windows 机器或 CI 上执行。
+自动发布:推一个 `v*` 标签即触发 GitHub Actions 双平台打包并自动发 Release:
+
+```bash
+git tag v0.2.0 && git push origin v0.2.0
+```
 
 ## 自定义形象(素材包)
 
