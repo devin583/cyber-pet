@@ -104,8 +104,26 @@ $('btn-import').addEventListener('click', async () => {
 });
 
 $('btn-open-packs').addEventListener('click', () => api.openPacks());
-$('btn-spec').addEventListener('click', () => api.openSpecDoc());
-$('btn-integrations').addEventListener('click', () => api.openIntegrationsDoc());
+// 所有代码块加"复制"按钮,示例直接抄走就能用
+for (const pre of document.querySelectorAll('pre')) {
+  const wrap = document.createElement('div');
+  wrap.className = 'codewrap';
+  pre.parentNode.insertBefore(wrap, pre);
+  wrap.appendChild(pre);
+  const btn = document.createElement('button');
+  btn.className = 'copy';
+  btn.textContent = '复制';
+  btn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(pre.textContent);
+      btn.textContent = '已复制 ✓';
+    } catch {
+      btn.textContent = '复制失败';
+    }
+    setTimeout(() => { btn.textContent = '复制'; }, 1500);
+  });
+  wrap.appendChild(btn);
+}
 $('btn-settings-file').addEventListener('click', () => api.openSettings());
 
 // 主进程广播的设置变化(托盘/右键菜单/手改文件)同步回表单

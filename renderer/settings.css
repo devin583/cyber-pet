@@ -80,6 +80,24 @@ th { background: #f4ecdd; }
 
 details { margin-top: 10px; }
 summary { cursor: pointer; font-weight: 600; }
+details details { margin: 8px 0 4px; }
+details details summary { font-weight: 600; font-size: 13px; color: #8a6d3b; }
+
+h3 { font-size: 13.5px; margin: 14px 0 4px; color: #6b4f33; }
+
+.codewrap { position: relative; }
+.codewrap .copy {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 9px;
+  font-size: 11.5px;
+  border-width: 1.5px;
+  border-radius: 7px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.codewrap:hover .copy { opacity: 1; }
 .spec { padding: 10px 4px 4px; line-height: 1.8; }
 .spec ul { padding-left: 20px; margin: 6px 0; }
 .spec button { margin-top: 8px; }
