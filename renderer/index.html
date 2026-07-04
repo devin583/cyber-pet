@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' file: data:; media-src 'self' file:; style-src 'self'">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="pet"><img id="frame" draggable="false" alt=""></div>
+  <div id="bubble" class="hidden"></div>
+  <div id="menu" class="hidden"></div>
+  <div id="chat" class="hidden">
+    <input id="chat-input" type="text" maxlength="60" placeholder="和我说点什么…(Esc 关闭)">
+  </div>
+  <script src="pet.js"></script>
+</body>
+</html>

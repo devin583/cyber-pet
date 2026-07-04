@@ -1,0 +1,44 @@
+{
+  "name": "cyber-pet",
+  "version": "0.1.0",
+  "description": "一只活泼灵动、可自定义素材包的桌面宠物",
+  "main": "main.js",
+  "author": "dubhe",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "smoke": "electron . --smoke",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.dubhe.cyberpet",
+    "productName": "CyberPet",
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**",
+      "assets/**"
+    ],
+    "extraResources": [
+      { "from": "packs", "to": "packs" },
+      { "from": "docs", "to": "docs" }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.png"
+    }
+  }
+}

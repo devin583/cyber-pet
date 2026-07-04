@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' file: data:; style-src 'self'">
+  <title>CyberPet 设置</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <h1>🐾 CyberPet 设置</h1>
+
+  <section>
+    <h2>🎨 素材包</h2>
+    <div id="packs" class="pack-grid"></div>
+    <div class="row btns">
+      <button id="btn-import">📥 导入素材包(zip / 文件夹)</button>
+      <button id="btn-open-packs">📂 打开素材包文件夹</button>
+    </div>
+    <details>
+      <summary>📐 我想自己做一个形象,需要准备几张图、什么样的图?</summary>
+      <div class="spec">
+        <p><b>硬性规格(每张图都要满足):</b></p>
+        <ul>
+          <li>格式:PNG / SVG / GIF / WebP,<b>透明背景</b></li>
+          <li>尺寸:正方形,建议 <b>512×512</b> 以内(显示时约 128px);<b>所有帧必须同尺寸、同机位、同大小</b></li>
+          <li>构图:角色<b>正面全身、居中</b>,<b>脚底贴住画布底边</b>(程序把底边踩在任务栏上)</li>
+        </ul>
+        <p><b>准备几张?三档任选:</b></p>
+        <table>
+          <tr><th>档位</th><th>张数</th><th>要画的内容</th></tr>
+          <tr><td>能跑</td><td><b>1 张</b></td><td>待机(睁眼闭嘴)。其余动作自动用它顶替</td></tr>
+          <tr><td>推荐</td><td><b>4 张</b></td><td>待机 + 闭眼(供眨眼/睡觉)+ 张嘴(供说话/吃饭)+ 笑眯眼(供开心)</td></tr>
+          <tr><td>完整</td><td><b>约 9 张</b></td><td>再加:呼吸第 2 帧、走路左右 2 帧、被拎起(惊讶)、落地压扁、被戳(不爽)</td></tr>
+        </table>
+        <p>只有 1~4 张时,项目自带脚本 <code>scripts/make_pack_from_image.py</code>
+           可自动烘焙出走路摇摆、拎起拉伸、落地压扁等全套动作,无需逐帧作画。</p>
+        <p><code>pack.json</code> 最小示例:</p>
+        <pre>{
+  "name": "我的猫",
+  "frameSize": { "width": 128, "height": 128 },
+  "states": {
+    "idle": { "frames": ["idle.png"], "fps": 1, "loop": true }
+  }
+}</pre>
+        <button id="btn-spec">📖 打开完整规范文档(全部 14 种状态与台词键)</button>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2>🤖 AI 聊天(可选)</h2>
+    <div class="row">
+      <label class="opt"><input type="checkbox" id="aiEnabled">启用 AI 回复</label>
+    </div>
+    <div class="row">
+      <label>接口地址</label>
+      <input type="text" id="aiBaseUrl" placeholder="https://api.openai.com/v1">
+    </div>
+    <div class="row">
+      <label>API Key</label>
+      <input type="password" id="aiApiKey" placeholder="sk-...">
+    </div>
+    <div class="row">
+      <label>模型</label>
+      <input type="text" id="aiModel" placeholder="gpt-4o-mini">
+      <button id="btn-ai-test">测试连接</button>
+    </div>
+    <p class="hint">
+      不启用也能聊:默认使用<b>内置本地规则引擎,完全免费、离线、零配置</b>,只是回复固定套路。<br>
+      启用后,规则没命中的话交给 AI 自由回答(带宠物人设)。支持任何 <b>OpenAI 兼容接口</b>:
+      OpenAI、DeepSeek(api.deepseek.com/v1)、Moonshot、通义等,<b>Key 需自备、按量计费</b>
+      (注意:ChatGPT Plus/Pro 会员不含 API 用量,API Key 要在 platform.openai.com 单独充值);
+      想要免费就本机跑 <b>Ollama</b>(地址填 http://127.0.0.1:11434/v1,Key 随便填)。
+    </p>
+  </section>
+
+  <section>
+    <h2>📊 数据来源与费用一览</h2>
+    <table class="src">
+      <tr><th>功能</th><th>来源</th><th>费用</th></tr>
+      <tr><td>聊天(默认)</td><td>内置本地规则引擎</td><td>免费,离线可用</td></tr>
+      <tr><td>AI 聊天(可选)</td><td>你配置的 OpenAI 兼容接口</td><td>自备 Key,按量计费;Ollama 本地免费</td></tr>
+      <tr><td>一言</td><td>v1.hitokoto.cn 公共服务</td><td>免费,断网自动回落本地台词</td></tr>
+      <tr><td>天气</td><td>wttr.in 公共服务</td><td>免费,无需注册</td></tr>
+      <tr><td>提醒 / 番茄钟 / 报时</td><td>本地计时</td><td>免费,离线可用</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>🐱 常规</h2>
+    <div class="row">
+      <label>宠物大小</label>
+      <label class="opt"><input type="radio" name="scale" value="0.75">小</label>
+      <label class="opt"><input type="radio" name="scale" value="1">中</label>
+      <label class="opt"><input type="radio" name="scale" value="1.5">大</label>
+    </div>
+    <div class="row">
+      <label class="opt"><input type="checkbox" id="openAtLogin">开机自动启动</label>
+    </div>
+  </section>
+
+  <section>
+    <h2>⏰ 提醒</h2>
+    <div class="row">
+      <label class="opt"><input type="checkbox" id="waterReminder">💧 喝水提醒,每</label>
+      <input type="number" id="waterIntervalMin" min="5" max="480"> 分钟
+    </div>
+    <div class="row">
+      <label class="opt"><input type="checkbox" id="sitReminder">🧘 久坐提醒,每</label>
+      <input type="number" id="sitIntervalMin" min="5" max="480"> 分钟
+    </div>
+    <div class="row">
+      <label class="opt"><input type="checkbox" id="chimeHourly">🕐 整点报时</label>
+    </div>
+    <p class="hint">提醒会同时以"宠物气泡 + 系统通知"两种方式出现;台词可由素材包自定义。</p>
+  </section>
+
+  <section>
+    <h2>⛅ 天气</h2>
+    <div class="row">
+      <label>城市</label>
+      <input type="text" id="weatherCity" placeholder="如 Beijing / Shanghai,留空按 IP 定位">
+    </div>
+    <p class="hint">挂代理时按 IP 定位会漂到代理所在地,此时建议手动填城市(拼音或英文)。</p>
+  </section>
+
+  <section>
+    <h2>🔌 本地通知 API</h2>
+    <div class="row">
+      <label class="opt"><input type="checkbox" id="localApi">启用</label>
+      <label>端口</label>
+      <input type="number" id="apiPort" min="1024" max="65535">
+    </div>
+    <p class="hint">只监听本机(127.0.0.1),外网无法访问。任何脚本都可以让宠物说话或发系统通知:</p>
+    <pre id="api-example"></pre>
+    <div class="row btns">
+      <button id="btn-integrations">📖 接入示例:订阅 / 定时任务 / CI / 脚本</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>🛠 高级</h2>
+    <div class="row btns">
+      <button id="btn-settings-file">打开配置文件(settings.json,保存后自动生效)</button>
+    </div>
+  </section>
+
+  <div id="toast" class="hidden"></div>
+  <script src="settings.js"></script>
+</body>
+</html>

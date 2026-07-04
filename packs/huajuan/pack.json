@@ -1,0 +1,199 @@
+{
+  "name": "花卷",
+  "author": "dubhe & Claude",
+  "version": "1.0.0",
+  "frameSize": {
+    "width": 128,
+    "height": 128
+  },
+  "facing": "right",
+  "states": {
+    "idle": {
+      "frames": [
+        "idle_0.svg",
+        "idle_1.svg"
+      ],
+      "fps": 1.6,
+      "loop": true
+    },
+    "blink": {
+      "frames": [
+        "blink_0.svg",
+        "idle_0.svg"
+      ],
+      "fps": 6,
+      "loop": false
+    },
+    "walk": {
+      "frames": [
+        "walk_0.svg",
+        "walk_1.svg"
+      ],
+      "fps": 4,
+      "loop": true
+    },
+    "drag": {
+      "frames": [
+        "drag_0.svg"
+      ],
+      "fps": 1,
+      "loop": true
+    },
+    "fall": {
+      "frames": [
+        "fall_0.svg"
+      ],
+      "fps": 1,
+      "loop": true
+    },
+    "land": {
+      "frames": [
+        "land_0.svg"
+      ],
+      "fps": 5,
+      "loop": false
+    },
+    "poke": {
+      "frames": [
+        "poke_0.svg",
+        "idle_0.svg"
+      ],
+      "fps": 4,
+      "loop": false
+    },
+    "happy": {
+      "frames": [
+        "happy_0.svg",
+        "happy_1.svg",
+        "happy_0.svg"
+      ],
+      "fps": 5,
+      "loop": false
+    },
+    "sleep": {
+      "frames": [
+        "sleep_0.svg",
+        "sleep_1.svg"
+      ],
+      "fps": 0.8,
+      "loop": true
+    },
+    "eat": {
+      "frames": [
+        "eat_0.svg",
+        "eat_1.svg",
+        "eat_0.svg",
+        "eat_1.svg"
+      ],
+      "fps": 5,
+      "loop": false
+    },
+    "dizzy": {
+      "frames": [
+        "dizzy_0.svg",
+        "dizzy_0.svg",
+        "idle_0.svg"
+      ],
+      "fps": 2.5,
+      "loop": false
+    },
+    "speak": {
+      "frames": [
+        "speak_0.svg",
+        "idle_0.svg",
+        "speak_0.svg"
+      ],
+      "fps": 5,
+      "loop": false
+    },
+    "stretch": {
+      "frames": [
+        "stretch_0.svg",
+        "idle_0.svg"
+      ],
+      "fps": 2,
+      "loop": false
+    },
+    "notify": {
+      "frames": [
+        "speak_0.svg",
+        "happy_0.svg"
+      ],
+      "fps": 3,
+      "loop": false
+    }
+  },
+  "dialog": {
+    "click": [
+      "喵呀!找我玩吗?",
+      "嘿嘿,再戳一下试试~",
+      "在呢在呢!"
+    ],
+    "angry": [
+      "呜哇,头晕了啦!",
+      "不许无限连击!"
+    ],
+    "doubleclick": [
+      "蹦蹦!再来一次!"
+    ],
+    "pet": [
+      "最喜欢摸摸了!",
+      "再来再来,别停~",
+      "呼噜呼噜噜——"
+    ],
+    "feed": [
+      "开饭!阿呆的那份也给我吧!",
+      "香香!你最好了!"
+    ],
+    "drop": [
+      "哎呀呀——",
+      "还好我毛厚!"
+    ],
+    "throw": [
+      "我起飞啦——!"
+    ],
+    "sleep": [
+      "困了困了,去找阿呆挤一挤……晚安~"
+    ],
+    "wake": [
+      "呼啊~睡得好香!"
+    ],
+    "greeting_morning": [
+      "早上好!今天也要加油鸭!",
+      "早安喵~吃早饭了吗?"
+    ],
+    "greeting_afternoon": [
+      "下午好~要不要伸个懒腰?",
+      "午后时光,最适合打盹了~"
+    ],
+    "greeting_evening": [
+      "晚上好!今天辛苦啦~"
+    ],
+    "greeting_night": [
+      "夜深了,早点休息哦~",
+      "还不睡吗?熬夜会秃头的喵!"
+    ],
+    "idlechat": [
+      "阿呆今天也好凶(才怪,他最软了)",
+      "一起晒太阳吗?",
+      "我的花纹是不是超好看!",
+      "你在忙呀?那我看着你忙~"
+    ],
+    "reminder_water": [
+      "喝水水!我都喝三次了!",
+      "咕咚咕咚,一起喝~"
+    ],
+    "reminder_sit": [
+      "起来伸懒腰!学我,喵~"
+    ],
+    "chat_praise": [
+      "嘿嘿嘿,我知道我最可爱!",
+      "你也超可爱!"
+    ],
+    "chat_insult": [
+      "呜……我去找阿呆告状!",
+      "(耳朵耷下来了)"
+    ]
+  },
+  "persona": "你是一只名叫「花卷」的棕色虎斑胖猫,活泼粘人、贪吃爱撒娇,最喜欢主人和另一只叫阿呆的灰白猫"
+}
