@@ -19,7 +19,7 @@ function fillForm() {
   document.querySelectorAll('input[name="scale"]').forEach(r => {
     r.checked = parseFloat(r.value) === settings.scale;
   });
-  for (const id of ['openAtLogin', 'waterReminder', 'sitReminder', 'chimeHourly', 'localApi']) {
+  for (const id of ['openAtLogin', 'waterReminder', 'sitReminder', 'reminderAnimation', 'chimeHourly', 'localApi']) {
     $(id).checked = !!settings[id];
   }
   for (const id of ['waterIntervalMin', 'sitIntervalMin', 'apiPort']) {
@@ -65,7 +65,7 @@ document.querySelectorAll('input[name="scale"]').forEach(r => {
   r.addEventListener('change', () => api.updateSettings({ scale: parseFloat(r.value) }));
 });
 
-for (const id of ['openAtLogin', 'waterReminder', 'sitReminder', 'chimeHourly', 'localApi', 'aiEnabled']) {
+for (const id of ['openAtLogin', 'waterReminder', 'sitReminder', 'reminderAnimation', 'chimeHourly', 'localApi', 'aiEnabled']) {
   $(id).addEventListener('change', e => api.updateSettings({ [id]: e.target.checked }));
 }
 
@@ -83,6 +83,11 @@ $('btn-ai-test').addEventListener('click', async () => {
   if (r && r.reply) toast('✅ 连接成功:' + r.reply.slice(0, 40));
   else if (r && r.error) toast('❌ 接口报错:' + r.error.slice(0, 60));
   else toast('❌ 连接失败:检查地址、Key 与网络');
+});
+
+$('btn-reminder-preview').addEventListener('click', async () => {
+  const ok = await api.previewReminder();
+  toast(ok ? '预览已在桌面上播放' : '桌宠窗口尚未就绪');
 });
 
 for (const id of ['waterIntervalMin', 'sitIntervalMin', 'apiPort']) {

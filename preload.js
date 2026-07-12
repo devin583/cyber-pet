@@ -9,6 +9,8 @@ contextBridge.exposeInMainWorld('petAPI', {
   aiChat: text => ipcRenderer.invoke('ai-chat', text),
   weather: () => ipcRenderer.invoke('weather'),
   updateSettings: partial => ipcRenderer.send('update-settings', partial),
+  previewReminder: () => ipcRenderer.invoke('preview-reminder'),
+  reminderAction: data => ipcRenderer.send('reminder-action', data),
   notify: (title, body) => ipcRenderer.send('notify', { title, body }),
   hide: () => ipcRenderer.send('hide'),
   quit: () => ipcRenderer.send('quit'),

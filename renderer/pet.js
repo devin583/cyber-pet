@@ -7,6 +7,16 @@ const bubbleEl = document.getElementById('bubble');
 const menuEl = document.getElementById('menu');
 const chatEl = document.getElementById('chat');
 const chatInput = document.getElementById('chat-input');
+const reminderScene = document.getElementById('reminder-scene');
+const reminderPetFrame = document.getElementById('reminder-pet-frame');
+const reminderIcon = document.getElementById('reminder-icon');
+const reminderKicker = document.getElementById('reminder-kicker');
+const reminderTitle = document.getElementById('reminder-title');
+const reminderMessage = document.getElementById('reminder-message');
+const reminderDone = document.getElementById('reminder-done');
+const reminderSnooze = document.getElementById('reminder-snooze');
+const reminderSkip = document.getElementById('reminder-skip');
+const reminderTimeout = document.getElementById('reminder-timeout');
 
 // ---------- 常量 ----------
 const GRAVITY = 2600;          // px/s^2
@@ -95,6 +105,11 @@ let petStrokes = [];          // 抚摸检测: 记录方向变化
 let petCooldownUntil = 0;
 let sleepBubbleTimer = null;
 let bubbleTimer = null;
+let reminderActive = false;
+let reminderData = null;
+let reminderTimer = null;
+let reminderCountdownTimer = null;
+let queuedReminder = null;
 
 // 拖拽状态
 let pressing = false, dragging = false;
@@ -439,6 +454,126 @@ function togglePomodoro() {
   showBubble('🍅 ' + lineFor('pomodoro_start'), 4000);
 }
 
+// ---------- 强提醒:宠物把工作窗口推走 ----------
+
+const REMINDER_UI = {
+  water: {
+    icon: '💧', kicker: '补水时间', title: '先把工作放一放',
+    done: '我喝过水了', followup: '这才对嘛，继续保持水分充足~'
+  },
+  sit: {
+    icon: '🧘', kicker: '活动时间', title: '该离开椅子一会儿了',
+    done: '我起来活动了', followup: '肩膀转一转，走两步再回来~'
+  }
+};
+
+function startReminderScene(data) {
+  if (reminderActive) {
+    queuedReminder = data;
+    return;
+  }
+  if (!settings.reminderAnimation && !data.preview) {
+    wake('reminder');
+    playOnce('notify');
+    showBubble('⏰ ' + data.text, 5000);
+    playSound('notify');
+    return;
+  }
+
+  const ui = REMINDER_UI[data.type] || REMINDER_UI.water;
+  reminderActive = true;
+  reminderData = data;
+  pressing = false;
+  dragging = false;
+  closeMenu();
+  closeChat();
+  clearTimeout(bubbleTimer);
+  bubbleEl.classList.add('hidden');
+  if (mode === 'sleep') {
+    manualSleep = false;
+    clearInterval(sleepBubbleTimer);
+  }
+  mode = 'reminder';
+  setAnim('notify');
+
+  reminderScene.dataset.type = data.type;
+  reminderIcon.textContent = ui.icon;
+  reminderKicker.textContent = ui.kicker;
+  reminderTitle.textContent = ui.title;
+  reminderMessage.textContent = data.text;
+  reminderDone.textContent = ui.done;
+  reminderTimeout.textContent = '30 秒后自动收起 · 按 Esc 跳过';
+  reminderPetFrame.src = frameEl.src;
+  const artFacing = cfg.facing === 'left' ? -1 : 1;
+  reminderPetFrame.style.transform = -1 * artFacing < 0 ? 'scaleX(-1)' : '';
+  petEl.classList.add('reminder-hidden');
+  reminderScene.classList.remove('hidden', 'active', 'leaving');
+  api.setIgnore(false);
+  api.setFocusable(true);
+  mouseOverPet = true;
+
+  // 两帧后开始位移，确保浏览器先画出“尚未被推开”的窗口。
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    reminderScene.classList.add('active');
+    reminderDone.focus({ preventScroll: true });
+  }));
+
+  let seconds = 30;
+  clearInterval(reminderCountdownTimer);
+  reminderCountdownTimer = setInterval(() => {
+    seconds--;
+    reminderTimeout.textContent = `${Math.max(0, seconds)} 秒后自动收起 · 按 Esc 跳过`;
+  }, 1000);
+  clearTimeout(reminderTimer);
+  reminderTimer = setTimeout(() => finishReminder('skip'), 30000);
+  playSound('notify');
+}
+
+function finishReminder(action) {
+  if (!reminderActive) return;
+  const finished = reminderData;
+  const ui = REMINDER_UI[finished.type] || REMINDER_UI.water;
+  clearTimeout(reminderTimer);
+  clearInterval(reminderCountdownTimer);
+  reminderScene.classList.remove('active');
+  reminderScene.classList.add('leaving');
+  api.reminderAction({ type: finished.type, action, preview: !!finished.preview });
+
+  setTimeout(() => {
+    reminderScene.classList.add('hidden');
+    reminderScene.classList.remove('leaving');
+    petEl.classList.remove('reminder-hidden');
+    reminderActive = false;
+    reminderData = null;
+    mode = 'idle';
+    baseAnim();
+    scheduleIdle(3, 7);
+    api.setFocusable(false);
+    updateIgnore(lastMouseX, lastMouseY);
+    if (action === 'snooze') showBubble('好，10 分钟后我再来搬一次~', 4000);
+    else if (action === 'done') {
+      playOnce('happy');
+      showBubble(ui.followup, 4000);
+    }
+    if (queuedReminder) {
+      const next = queuedReminder;
+      queuedReminder = null;
+      setTimeout(() => startReminderScene(next), 700);
+    }
+  }, 650);
+}
+
+reminderDone.addEventListener('click', () => finishReminder('done'));
+reminderSnooze.addEventListener('click', () => finishReminder('snooze'));
+reminderSkip.addEventListener('click', () => finishReminder('skip'));
+
+document.addEventListener('keydown', e => {
+  if (reminderActive && e.key === 'Escape') {
+    e.preventDefault();
+    finishReminder('skip');
+  }
+});
+
 // ---------- 聊天输入框 ----------
 
 function openChat() {
@@ -527,6 +662,12 @@ function tick(now) {
 
   stepAnim(dt);
 
+  if (reminderActive) {
+    reminderPetFrame.src = frameEl.src;
+    requestAnimationFrame(tick);
+    return;
+  }
+
   if (mode === 'walk') {
     const dir = Math.sign(walkTarget - x);
     facing = dir || facing;
@@ -598,7 +739,7 @@ function petRect() {
 function updateIgnore(mx, my) {
   const rct = petRect();
   const over = (mx >= rct.l && mx <= rct.r && my >= rct.t && my <= rct.b);
-  const interactive = over || dragging || menuOpen || chatOpen;
+  const interactive = over || dragging || menuOpen || chatOpen || reminderActive;
   if (interactive !== mouseOverPet) {
     mouseOverPet = interactive;
     api.setIgnore(!interactive);
@@ -828,12 +969,7 @@ function applyScale() {
 
 // ---------- 提醒 / 睡眠 / 设置事件 ----------
 
-api.onReminder(({ type, text }) => {
-  wake('reminder');
-  playOnce('notify');
-  showBubble('⏰ ' + text, 5000);
-  playSound('notify');
-});
+api.onReminder(data => startReminderScene(data));
 
 api.onSysIdle(sec => {
   if (sec >= SLEEP_IDLE_SEC && mode === 'idle' && !pomodoroEnd) goSleep(false);

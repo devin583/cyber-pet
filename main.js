@@ -12,6 +12,7 @@ const DEFAULT_SETTINGS = {
   scale: 1,
   waterReminder: false,
   sitReminder: false,
+  reminderAnimation: true,
   waterIntervalMin: 60,
   sitIntervalMin: 45,
   chimeHourly: false,
@@ -538,10 +539,10 @@ function startSchedulers() {
   }, 20000);
 }
 
-function fireReminder(type) {
+function fireReminder(type, { preview = false } = {}) {
   const text = pickReminderText(type);
-  if (win && !hidden) win.webContents.send('reminder', { type, text });
-  if (Notification.isSupported()) {
+  if (win && !hidden) win.webContents.send('reminder', { type, text, preview });
+  if (!preview && Notification.isSupported()) {
     new Notification({ title: REMINDER_META[type].title, body: text }).show();
   }
 }
@@ -568,6 +569,24 @@ ipcMain.on('set-focusable', (_e, flag) => {
 });
 
 ipcMain.on('update-settings', (_e, partial) => applySettings(partial));
+
+ipcMain.handle('preview-reminder', () => {
+  if (!win || win.isDestroyed()) return false;
+  if (hidden) {
+    hidden = false;
+    win.showInactive();
+    buildTrayMenu();
+  }
+  fireReminder('water', { preview: true });
+  return true;
+});
+
+ipcMain.on('reminder-action', (_e, { type, action, preview }) => {
+  if (preview || action !== 'snooze' || !REMINDER_META[type]) return;
+  const intervalMin = type === 'water' ? settings.waterIntervalMin : settings.sitIntervalMin;
+  // 调整基准时钟，使下一次提醒恰好落在 10 分钟后。
+  reminderClock[type] = Date.now() - intervalMin * 60000 + 10 * 60000;
+});
 
 ipcMain.on('notify', (_e, { title, body }) => {
   if (Notification.isSupported()) new Notification({ title, body }).show();

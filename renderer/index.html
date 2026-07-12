@@ -13,6 +13,37 @@
   <div id="chat" class="hidden">
     <input id="chat-input" type="text" maxlength="60" placeholder="和我说点什么…(Esc 关闭)">
   </div>
+  <div id="reminder-scene" class="hidden" role="dialog" aria-modal="true"
+       aria-labelledby="reminder-title" aria-describedby="reminder-message">
+    <div class="reminder-scrim" aria-hidden="true"></div>
+    <div class="work-surface" aria-hidden="true">
+      <div class="work-titlebar">
+        <span></span><span></span><span></span>
+        <i></i>
+      </div>
+      <div class="work-ghost">
+        <b></b><b></b><b></b><b></b>
+      </div>
+      <div class="work-edge"><i></i><i></i><i></i></div>
+    </div>
+    <div id="reminder-pet" aria-hidden="true">
+      <img id="reminder-pet-frame" draggable="false" alt="">
+      <span class="paw paw-top"></span>
+      <span class="paw paw-bottom"></span>
+    </div>
+    <section class="reminder-card">
+      <div id="reminder-icon" class="reminder-icon">💧</div>
+      <p id="reminder-kicker" class="reminder-kicker">补水时间</p>
+      <h1 id="reminder-title">先把工作放一放</h1>
+      <p id="reminder-message"></p>
+      <div class="reminder-actions">
+        <button id="reminder-done" class="reminder-primary" type="button">我喝过水了</button>
+        <button id="reminder-snooze" type="button">10 分钟后提醒</button>
+        <button id="reminder-skip" class="reminder-quiet" type="button">这次跳过</button>
+      </div>
+      <p id="reminder-timeout" class="reminder-timeout">30 秒后自动收起 · 按 Esc 跳过</p>
+    </section>
+  </div>
   <script src="pet.js"></script>
 </body>
 </html>
